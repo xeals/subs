@@ -102,7 +102,10 @@ pub enum AppCommand {
 
     /// Add a song to the current playlist
     #[structopt(name = "add")]
-    Add,
+    Add {
+        /// Adds the first result for the query
+        query: String,
+    },
 
     /// Add a song to play after the current song
     #[structopt(name = "addnext")]

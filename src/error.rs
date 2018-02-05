@@ -1,7 +1,7 @@
 use configure;
+use serde_json;
 use std::{io, result};
 use sunk;
-use serde_json;
 
 pub type Result = result::Result<(), Error>;
 
@@ -13,7 +13,9 @@ pub enum Error {
     #[fail(display = "{}", _0)] Other(&'static str),
     #[fail(display = "")] ExplicitStop,
     #[fail(display = "IO error: {}", _0)] Io(#[cause] io::Error),
-    #[fail(display = "Serialisation error: {}", _0)] Serde(#[cause] serde_json::Error)
+    #[fail(display = "Serialisation error: {}", _0)]
+    Serde(#[cause] serde_json::Error),
+    #[fail(display = "Error from daemon: {}", _0)] Response(String),
 }
 
 macro_rules! box_err {

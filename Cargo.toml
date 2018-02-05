@@ -4,11 +4,11 @@ version = "0.0.0"
 authors = ["Alex Smith <azphreal19@protonmail.com>"]
 
 [dependencies]
-sunk = "0.1.1"
+# sunk = "0.1.1"
+sunk = { path = "../sunk" }
 clap = { version = "2.29.2", features = ["yaml"] }
 failure = "0.1.1"
 ctrlc = { version = "3.1.0", features = ["termination"] }
-rodio = { git = "https://github.com/tomaka/rodio" }
 crossbeam-channel = "0.1.2"
 log = "0.4.1"
 fern = "0.5.2"

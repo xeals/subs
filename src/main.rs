@@ -8,9 +8,9 @@ extern crate ctrlc;
 #[macro_use]
 extern crate failure;
 extern crate fern;
+extern crate gstreamer as gst;
 #[macro_use]
 extern crate log;
-extern crate rodio;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -19,7 +19,6 @@ extern crate structopt;
 #[macro_use]
 extern crate structopt_derive;
 extern crate unix_socket;
-extern crate gstreamer as gst;
 
 mod cli;
 mod error;
@@ -27,15 +26,13 @@ mod subcmd;
 mod config;
 mod daemon;
 mod queue;
+mod player;
 
 use structopt::StructOpt;
 
 fn main() {
     use_default_config!();
     let app = cli::App::from_args();
-
-    // let yaml = load_yaml!("cli.yml");
-    // let matches = clap::App::from_yaml(yaml).get_matches();
 
     if let Err(err) = init_logging(app.verbosity) {
         println!("[ERROR] Logging initialisation failed: {}", err);
@@ -45,6 +42,13 @@ fn main() {
     use cli::ListCommand;
     if let Err(err) = match app.cmd {
         Load { name } => subcmd::load(name),
+        Pause => subcmd::pause(),
+        Play => subcmd::play(),
+        Toggle => subcmd::toggle(),
+        Prev => subcmd::prev(),
+        Next => subcmd::next(),
+        Add { query } => subcmd::add(query),
+        Search { .. } => subcmd::search(app.cmd),
         Daemon { cmd } => {
             use cli::DaemonCommand::*;
             match cmd {
