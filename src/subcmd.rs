@@ -32,7 +32,12 @@ pub fn search(args: AppCommand) -> Result {
     {
         let resp =
             daemon::send_recv(Command::Search(query, false, false, true))?;
-        if let Reply::Search {albums, artists, songs} = resp {
+        if let Reply::Search {
+            albums,
+            artists,
+            songs,
+        } = resp
+        {
             for s in songs {
                 println!("{}", s);
             }

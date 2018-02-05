@@ -1,6 +1,3 @@
-use error;
-use sunk::song::Song;
-
 #[derive(Debug)]
 pub struct Queue {
     songs: Vec<usize>,

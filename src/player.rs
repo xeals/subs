@@ -1,13 +1,12 @@
+use crossbeam_channel::*;
 use gst;
 use gst::prelude::*;
-use crossbeam_channel::*;
-use std::time::{Duration};
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
 use sunk::{Client, Streamable};
 use sunk::song::Song;
-use std::sync::{Arc, Mutex};
 
 use daemon::Command;
-use error::{Error, Result};
 use queue::Queue;
 
 pub struct Player {
@@ -116,9 +115,9 @@ impl Player {
                         let cli = &*self.client
                             .lock()
                             .expect("unable to lock client");
-                        let song = Song::get(&cli, n as u64).unwrap();
+                        let song = Song::get(cli, n as u64).unwrap();
 
-                        let url = song.stream_url(&cli).unwrap();
+                        let url = song.stream_url(cli).unwrap();
                         let pipe =
                             gst::parse_launch(&format!("playbin uri={}", url))
                                 .expect("unable to start pipe");
@@ -136,4 +135,3 @@ impl Player {
         }
     }
 }
-

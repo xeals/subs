@@ -4,15 +4,14 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use sunk::{Client, Streamable};
-use sunk::search::{self, SearchPage, SearchResult};
-use sunk::song::Song;
+use sunk::Client;
+use sunk::search::{self, SearchPage};
 use unix_socket::{UnixListener, UnixStream};
 
 use error::{Error, Result};
 use player::Player;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Command {
     Play,
     Pause,
@@ -25,7 +24,7 @@ pub enum Command {
     Search(String, bool, bool, bool),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Reply {
     Search {
         albums: Vec<String>,
@@ -135,7 +134,7 @@ impl Daemon {
                 let s = SearchPage::new().with_size(1);
                 let sr = self.client.lock().unwrap().search(&q, n, n, s)?;
                 return Ok(serde_json::to_string(&Reply::Other(if let Some(
-                    ref song,
+                    song,
                 ) =
                     sr.songs.get(0)
                 {
