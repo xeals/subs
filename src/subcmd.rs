@@ -49,4 +49,11 @@ pub fn search(args: AppCommand) -> Result {
     Ok(())
 }
 
-pub fn status() -> Result { unimplemented!() }
+pub fn status() -> Result {
+    if let Reply::Other(r) = daemon::send_recv(Command::StatusReq)? {
+        println!("{}", r);
+        Ok(())
+    } else {
+        unreachable!()
+    }
+}

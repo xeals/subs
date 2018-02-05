@@ -22,6 +22,8 @@ pub enum Command {
     Add(u64),
     AddSearch(String),
     Search(String, bool, bool, bool),
+    StatusReq,
+    Status(String),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -143,6 +145,15 @@ impl Daemon {
                 } else {
                     format!("Nothing found for \"{}\"", q)
                 }))?)
+            }
+            StatusReq => {
+                self.player_send.send(Command::StatusReq).unwrap();
+                let st = self.player_recv.recv().unwrap();
+                if let Command::Status(s) = st {
+                    return Ok(serde_json::to_string(&Reply::Other(s))?)
+                } else {
+                    unreachable!()
+                }
             }
             Search(q, r, a, s) => {
                 macro_rules! chk {

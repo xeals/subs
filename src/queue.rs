@@ -12,6 +12,8 @@ impl Queue {
         }
     }
 
+    pub fn position(&self) -> usize {self.position}
+
     pub fn len(&self) -> usize { self.songs.len() }
 
     pub fn is_empty(&self) -> bool { self.len() == 0 }
@@ -20,6 +22,10 @@ impl Queue {
 
     pub fn insert_next(&mut self, song: usize) {
         self.songs.insert(self.position + 1, song);
+    }
+
+    pub fn current(&self) -> Option<usize> {
+        self.songs.get(self.position).map(|i| *i)
     }
 
     pub fn has_next(&self) -> bool {

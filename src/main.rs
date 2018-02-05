@@ -49,6 +49,7 @@ fn main() {
         Next => subcmd::next(),
         Add { query } => subcmd::add(query),
         Search { .. } => subcmd::search(app.cmd),
+        Status => subcmd::status(),
         Daemon { cmd } => {
             use cli::DaemonCommand::*;
             match cmd {

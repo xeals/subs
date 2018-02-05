@@ -6,6 +6,7 @@ use std::time::Duration;
 use sunk::{Client, Streamable};
 use sunk::song::Song;
 
+use error::Error;
 use daemon::Command;
 use queue::Queue;
 
@@ -103,6 +104,11 @@ impl Player {
                             }
                         }
                     }
+                    Command::StatusReq => {
+                        debug!("sending status");
+                        let status = self.status();
+                        self.daemon_send.send(Command::Status(status));
+                    }
                     Command::Stop => {
                         debug!("stopping");
                         break
@@ -132,6 +138,61 @@ impl Player {
                     }
                 }
             }
+        }
+    }
+
+    fn status(&self) -> String {
+        fn secs_to_minsec(secs: u64) -> String {
+            if secs >= 60 {
+                format!("{}:{}", secs / 60, secs % 60)
+            } else {
+                secs.to_string()
+            }
+        }
+
+        if let Some(song) = self.queue.current() {
+            let (status, prog) = if let Some(ref pipe) = self.pipe {
+                let state = pipe.get_state(gst::CLOCK_TIME_NONE).1;
+                let status = match state {
+                    gst::State::Playing => "playing",
+                    gst::State::Paused => "paused",
+                    _ => "???"
+                };
+                let prog = pipe.query_position::<gst::ClockTime>()
+                    .expect("error getting clock time")
+                    .seconds()
+                    .expect("unable to cast clock to seconds");
+
+                (status, prog)
+            } else {
+                ("paused", 0)
+            };
+
+            let cli = &*self.client.lock().expect("unable to lock client");
+            let curr_song = Song::get(cli, song as u64).unwrap();
+            let dur = curr_song.duration.unwrap();
+
+            format!(
+                "{art}{title}\n[{stat}]  #{n}/{size}  {prog}/{dur} ({per})",
+                art = if let Some(a) = curr_song.artist {
+                    a + " - "
+                } else {
+                    "".to_string()
+                },
+                title = curr_song.title,
+                stat = status,
+                n = self.queue.position(),
+                size = self.queue.len(),
+                prog = secs_to_minsec(prog),
+                dur = secs_to_minsec(dur),
+                per = if prog > 0 {
+                    format!("{:.0}", dur / prog)
+                } else {
+                    "0".into()
+                },
+            )
+        } else {
+            "nothing to display".into()
         }
     }
 }
