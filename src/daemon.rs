@@ -9,6 +9,8 @@ use std::time::Duration;
 use sunk::{Client, Hls, HlsPlaylist, Streamable};
 use sunk::song::Song;
 use unix_socket::{UnixListener, UnixStream};
+use gst;
+use gst::prelude::*;
 
 use error::{Error, Result};
 use queue::Queue;
@@ -137,6 +139,7 @@ struct Player {
     queue: Queue,
     curr_song: Option<HlsPlaylist>,
     curr_pos: usize,
+    curr_pipe: Option<gst::Element>,
 }
 
 impl Player {
@@ -156,10 +159,13 @@ impl Player {
             queue: Queue::new(),
             curr_song: None,
             curr_pos: 0,
+            curr_pipe: None,
         }
     }
 
     fn run(&mut self) {
+        gst::init().expect("unable to initialise gstreamer");
+
         /// Fetches the next song in the playlist and sets it as the current
         /// song.
         fn prep_song(p: &mut Player) -> Result {
@@ -196,9 +202,10 @@ impl Player {
         self.queue.append(1887);
         self.queue.append(1888);
         // Time before next segment has to be appended.
-        let mut sink_dur = (if self.queue.is_empty() {999} else {0}, 0);
+        // let mut sink_dur = (if self.queue.is_empty() {999} else {0}, 0);
+        let mut sink_dur = if self.queue.is_empty() {999} else {0};
         loop {
-            match self.daemon_recv.recv_timeout(Duration::from_secs(sink_dur.0)) {
+            match self.daemon_recv.recv_timeout(Duration::from_secs(sink_dur)) {
                 Ok(cmd) => match cmd {
                     Command::Add(song) => {
                         debug!("adding song {}", song);
@@ -207,6 +214,17 @@ impl Player {
                     _ => (),
                 },
                 Err(_) => {
+                    if let Some(n) = self.queue.next() {
+                        let cli = &*self.client.lock().expect("unable to lock client");
+                        let song = Song::get(&cli, n as u64).unwrap();
+
+                        let url = song.stream_url(&cli).unwrap();
+                        let pipe = gst::parse_launch(&format!("playbin uri={}", url)).unwrap();
+                        pipe.set_state(gst::State::Playing);
+                        self.curr_pipe = Some(pipe);
+                        sink_dur = song.duration.unwrap() as u64;
+                    }
+
                     // The aim is to be playing one segment while prepping the
                     // next. The first one has to add two segments, and set the
                     // timeout to the first segment. When that pops, the player
@@ -216,36 +234,36 @@ impl Player {
                     // When the timer pops to play the last segment of the
                     // current song, it has to fetch the first segment of the
                     // next song.
-                    match (self.curr_song.is_some(), self.queue.has_next()) {
-                        // Currently playing, has next
-                        (true, true) => {
-                            if self.curr_pos - 1 ==
-                                self.curr_song.as_ref().unwrap().len()
-                            {
-                                // Need next song
-                                prep_song(self).unwrap();
-                                let (_, inc) = next_segment(self);
-                                sink_dur = (sink_dur.1, inc);
-                            } else {
-                                // Get next part of current song
-                                let (_, inc) = next_segment(self);
-                                sink_dur = (sink_dur.1, inc);
-                            }
-                        },
-                        // Currently playing, doesn't have next
-                        (true, false) => {
-                            sink_dur = (sink_dur.1, 999);
-                        },
-                        // Nothing playing, has next; fetch two
-                        (false, true) => {
-                            prep_song(self).unwrap();
-                            let (_, len1) = next_segment(self);
-                            let (_, len2) = next_segment(self);
-                            sink_dur = (len1, len2);
-                        },
-                        // Nothing playing, doesn't have next
-                        (false, false) => {},
-                    }
+                    // match (self.curr_song.is_some(), self.queue.has_next()) {
+                    //     // Currently playing, has next
+                    //     (true, true) => {
+                    //         if self.curr_pos - 1 ==
+                    //             self.curr_song.as_ref().unwrap().len()
+                    //         {
+                    //             // Need next song
+                    //             prep_song(self).unwrap();
+                    //             let (_, inc) = next_segment(self);
+                    //             sink_dur = (sink_dur.1, inc);
+                    //         } else {
+                    //             // Get next part of current song
+                    //             let (_, inc) = next_segment(self);
+                    //             sink_dur = (sink_dur.1, inc);
+                    //         }
+                    //     },
+                    //     // Currently playing, doesn't have next
+                    //     (true, false) => {
+                    //         sink_dur = (sink_dur.1, 999);
+                    //     },
+                    //     // Nothing playing, has next; fetch two
+                    //     (false, true) => {
+                    //         prep_song(self).unwrap();
+                    //         let (_, len1) = next_segment(self);
+                    //         let (_, len2) = next_segment(self);
+                    //         sink_dur = (len1, len2);
+                    //     },
+                    //     // Nothing playing, doesn't have next
+                    //     (false, false) => {},
+                    // }
                     // if self.curr_song.is_none() && self.queue.has_next() {
                     //     // not playing, has a queue
                     //     debug!("fetching next song");

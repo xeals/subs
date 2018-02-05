@@ -342,6 +342,67 @@ dependencies = [
 ]
 
 [[package]]
+name = "glib"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gobject-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "glib-sys"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "gobject-sys"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "gstreamer"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gobject-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gstreamer-sys 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+ "muldiv 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num-rational 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "gstreamer-sys"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "glib-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gobject-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.36 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pkg-config 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "heck"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -554,6 +615,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "muldiv"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "native-tls"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -594,6 +660,23 @@ dependencies = [
 name = "nodrop"
 version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "num-integer"
+version = "0.1.35"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "num-traits 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.1.41"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "num-integer 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num-traits 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "num-traits"
@@ -973,6 +1056,7 @@ dependencies = [
  "ctrlc 3.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "fern 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gstreamer 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rodio 0.5.2 (git+https://github.com/tomaka/rodio)",
  "serde 1.0.27 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1314,6 +1398,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum fuchsia-zircon-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
 "checksum futures 0.1.18 (registry+https://github.com/rust-lang/crates.io-index)" = "0bab5b5e94f5c31fc764ba5dd9ad16568aae5d4825538c01d6bca680c9bf94a7"
 "checksum futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
+"checksum glib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "b9b0452824cc63066940f01adc721804919f0b76cdba3cfab977b00b87f16d4a"
+"checksum glib-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d9693049613ff52b93013cc3d2590366d8e530366d288438724b73f6c7dc4be8"
+"checksum gobject-sys 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "60d507c87a71b1143c66ed21a969be9b99a76df234b342d733e787e6c9c7d7c2"
+"checksum gstreamer 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d24a451fd49e81fc25c409a60af6012907a7a8b91e4ac722f034023c228d95be"
+"checksum gstreamer-sys 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d8fbed68c5f452ad709df55a313b09d2cb43333637a77ad31db39ed4ac76f762"
 "checksum heck 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ea04fa3ead4e05e51a7c806fc07271fdbde4e246a6c6d1efd52e72230b771b82"
 "checksum hound 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7cb2af8cad251a1869dbc6ae1ae744b849a32458be4aee82cba93481847656a8"
 "checksum httparse 1.2.4 (registry+https://github.com/rust-lang/crates.io-index)" = "c2f407128745b78abc95c0ffbe4e5d37427fdc0d45470710cfef8c44522a2e37"
@@ -1339,10 +1428,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum mime_guess 2.0.0-alpha.3 (registry+https://github.com/rust-lang/crates.io-index)" = "013572795763289e14710c7b279461295f2673b2b338200c235082cd7ca9e495"
 "checksum mio 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)" = "75f72a93f046f1517e3cfddc0a096eb756a2ba727d36edc8227dee769a50a9b0"
 "checksum miow 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "8c1f2f3b1cf331de6896aabf6e9d55dca90356cc9960cca7eaaf408a355ae919"
+"checksum muldiv 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "1cbef5aa2e8cd82a18cc20e26434cc9843e1ef46e55bfabe5bddb022236c5b3e"
 "checksum native-tls 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "f74dbadc8b43df7864539cedb7bc91345e532fdd913cfdc23ad94f4d2d40fbc0"
 "checksum net2 0.2.31 (registry+https://github.com/rust-lang/crates.io-index)" = "3a80f842784ef6c9a958b68b7516bc7e35883c614004dd94959a4dca1b716c09"
 "checksum nix 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a2c5afeb0198ec7be8569d666644b574345aad2e95a53baf3a532da3e0f3fb32"
 "checksum nodrop 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "9a2228dca57108069a5262f2ed8bd2e82496d2e074a06d1ccc7ce1687b6ae0a2"
+"checksum num-integer 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)" = "d1452e8b06e448a07f0e6ebb0bb1d92b8890eea63288c0b627331d53514d0fba"
+"checksum num-rational 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)" = "0b950f75e042fdd710460084d19c8efdcd72d65183ead8ecd04b90483f5a55d2"
 "checksum num-traits 0.1.42 (registry+https://github.com/rust-lang/crates.io-index)" = "9936036cc70fe4a8b2d338ab665900323290efb03983c86cbe235ae800ad8017"
 "checksum num_cpus 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c51a3322e4bca9d212ad9a158a02abc6934d005490c054a2778df73a70aa0a30"
 "checksum ogg 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "013b78ceb7fb82555a2f8a95d8e40866fe64a5d15b83c51b3e1fdd40cd903ed3"

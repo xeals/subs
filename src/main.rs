@@ -19,6 +19,7 @@ extern crate structopt;
 #[macro_use]
 extern crate structopt_derive;
 extern crate unix_socket;
+extern crate gstreamer as gst;
 
 mod cli;
 mod error;
