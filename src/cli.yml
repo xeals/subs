@@ -1,0 +1,93 @@
+name: sunk
+version: "0.0.0"
+author: Alex Smith <azphreal@protonmail.ch>
+settings:
+  - ArgsNegateSubcommands
+  - VersionlessSubcommands
+args:
+  - verbose:
+      help: Set the level of verbosity
+      short: v
+      multiple: true
+      global: true
+subcommands:
+  - load:
+      about: Load a playlist as the current playlist
+      args:
+        - NAME:
+            help: Name of playlist to load
+            required: true
+  - search:
+      about: Search the library
+      args:
+        - QUERY:
+            help: Query to search with
+            takes_value: true
+            required: true
+        - only_artists:
+            help: Search only for artists
+            short: r
+            conflicts_with:
+              - only_albums
+              - only_songs
+        - only_albums:
+            help: Search only for albums
+            short: a
+            conflicts_with:
+              - only_artists
+              - only_songs
+        - only_songs:
+            help: Search only for songs
+            short: s
+            conflicts_with:
+              - only_artists
+              - only_albums
+
+  - list:
+      about: List information from the library
+      alias: ls
+      subcommands:
+        - playlist:
+            about: Display all playlists
+        - artists:
+            about: Display all artists
+            args:
+              - number:
+                  help: Maximum number of artists to display (default 20)
+                  short: n
+                  takes_value: true
+                  default_value: "20"
+  - play:
+      about: Play the current playlist
+  - pause:
+      about: Suspend playback of the current playlist
+  - toggle:
+      about: Toggle between playing or paused states
+  - next:
+      about: Play the next song in the current playlist
+  - prev:
+      about: Play the previous song in the current playlist
+  - shuffle:
+      about: Shuffle the curent playlist
+  - random:
+      about: Load a number of random songs into the current playlist (default 20)
+      args:
+        - number:
+            help: Number of songs to add
+            short: n
+            takes_value: true
+            default_value: "20"
+  - current:
+      about: Display the currently playing song
+  - clear:
+      about: Clear the current playlist
+  - crop:
+      about: Remove all but the currently playing song
+  - update:
+      about: Initiate a scan of the library
+  - add:
+      about: Add a song to the current playlist
+  - addnext:
+      about: Add a song to the current playlist to play after the current song
+  - status:
+      about: Display the status of the daemon

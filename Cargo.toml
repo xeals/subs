@@ -1,0 +1,21 @@
+[package]
+name = "subs"
+version = "0.0.0"
+authors = ["Alex Smith <azphreal19@protonmail.com>"]
+
+[dependencies]
+sunk = "0.1.1"
+clap = { version = "2.29.2", features = ["yaml"] }
+failure = "0.1.1"
+ctrlc = { version = "3.1.0", features = ["termination"] }
+rodio = { git = "https://github.com/tomaka/rodio" }
+crossbeam-channel = "0.1.2"
+log = "0.4.1"
+fern = "0.5.2"
+structopt = "0.1.7"
+structopt-derive = "0.1.6"
+configure = "0.1.1"
+serde = "1.0.27"
+serde_derive = "1.0.27"
+serde_json = "1.0.9"
+unix_socket = "0.5.0"
