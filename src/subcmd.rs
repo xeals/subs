@@ -37,9 +37,7 @@ pub fn addnext(query: String) -> Result {
 
 pub fn load(name: String) -> Result { unimplemented!() }
 
-pub fn random(n: usize) -> Result {
-    daemon::send(Command::Random(n))
-}
+pub fn random(n: usize) -> Result { daemon::send(Command::Random(n)) }
 
 pub fn search(args: AppCommand) -> Result {
     if let AppCommand::Search {

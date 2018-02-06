@@ -111,7 +111,7 @@ pub enum AppCommand {
     #[structopt(name = "addnext")]
     AddNext {
         /// Adds the first result for the query
-        query: String
+        query: String,
     },
 
     /// Display the status of the daemon

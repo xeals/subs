@@ -194,11 +194,7 @@ impl Player {
         if let Some(song) = self.queue.current() {
             let (status, prog) = if let Some(ref pipe) = self.pipe {
                 let state = pipe.get_state(gst::CLOCK_TIME_NONE).1;
-                let status = if self.playing {
-                    "playing"
-                } else {
-                    "paused"
-                };
+                let status = if self.playing { "playing" } else { "paused" };
                 let prog = pipe.query_position::<gst::ClockTime>()
                     .expect("error getting clock time")
                     .seconds()
