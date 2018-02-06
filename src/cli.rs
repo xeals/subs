@@ -80,8 +80,8 @@ pub enum AppCommand {
     /// Load a number of random songs
     #[structopt(name = "random")]
     Random {
-        #[structopt(short = "n", default_value = "20")]
-        number: u64,
+        #[structopt(default_value = "20")]
+        number: usize,
     },
 
     /// Display the currently playing song
@@ -109,7 +109,10 @@ pub enum AppCommand {
 
     /// Add a song to play after the current song
     #[structopt(name = "addnext")]
-    AddNext,
+    AddNext {
+        /// Adds the first result for the query
+        query: String
+    },
 
     /// Display the status of the daemon
     #[structopt(name = "status")]

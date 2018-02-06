@@ -4,8 +4,9 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use sunk::Client;
+use sunk::{Client, Genre};
 use sunk::search::{self, SearchPage};
+use sunk::song::Song;
 use unix_socket::{UnixListener, UnixStream};
 
 use error::{Error, Result};
@@ -19,11 +20,22 @@ pub enum Command {
     Next,
     Prev,
     Stop,
+    Clear,
     Add(u64),
+    AddMany(Vec<u64>),
     AddSearch(String),
+    AddNext(u64),
+    AddNextSearch(String),
     Search(String, bool, bool, bool),
     StatusReq,
     Status(String),
+    Random(usize),
+    RandomWith {
+        size: usize,
+        genre: String,
+        from: usize,
+        to: usize,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -130,7 +142,9 @@ impl Daemon {
         use self::Command::*;
         match cmd {
             Stop => return Err(Error::ExplicitStop),
-            Play | Pause | Toggle => self.player_send.send(cmd).unwrap(),
+            Play | Pause | Toggle | Next | Prev | Clear => {
+                self.player_send.send(cmd).unwrap()
+            }
             AddSearch(q) => {
                 let n = search::NONE;
                 let s = SearchPage::new().with_size(1);
@@ -141,10 +155,34 @@ impl Daemon {
                     sr.songs.get(0)
                 {
                     self.player_send.send(Add(song.id)).unwrap();
-                    "".into()
+                    format!("Adding {}.", song.title).into()
                 } else {
-                    format!("Nothing found for \"{}\"", q)
+                    format!("Nothing found for \"{}\".", q)
                 }))?)
+            }
+            AddNextSearch(q) => {
+                let n = search::NONE;
+                let s = SearchPage::new().with_size(1);
+                let sr = self.client.lock().unwrap().search(&q, n, n, s)?;
+                return Ok(serde_json::to_string(&Reply::Other(if let Some(
+                    song,
+                ) =
+                    sr.songs.get(0)
+                {
+                    self.player_send.send(AddNext(song.id)).unwrap();
+                    format!("Adding {}.", song.title).into()
+                } else {
+                    format!("Nothing found for \"{}\".", q)
+                }))?)
+            }
+            Random(n) => {
+                let songs = {
+                    let cli = &*self.client.lock().unwrap();
+                    Song::random(cli, n)
+                }?.iter()
+                    .map(|s| s.id)
+                    .collect::<Vec<_>>();
+                self.player_send.send(Command::AddMany(songs)).unwrap();
             }
             StatusReq => {
                 self.player_send.send(Command::StatusReq).unwrap();
@@ -222,10 +260,16 @@ pub fn cmd_start() -> Result {
     let cfg = ::config::Config::generate()?;
 
     debug!("Using config {:?}", cfg);
+
+    // This otherwise induces a panic, not an error, so check here.
+    if cfg.socket.exists() {
+        return Err("Socket file exists; make sure the daemon isn't already \
+                    running."
+            .into())
+    }
+
     let daemon = Daemon::new(cfg);
-
     info!("daemon ready");
-
     daemon.run()
 }
 

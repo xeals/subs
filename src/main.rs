@@ -1,5 +1,3 @@
-extern crate sunk;
-// #[macro_use]
 extern crate clap;
 #[macro_use]
 extern crate configure;
@@ -18,6 +16,7 @@ extern crate serde_json;
 extern crate structopt;
 #[macro_use]
 extern crate structopt_derive;
+extern crate sunk;
 extern crate unix_socket;
 
 mod cli;
@@ -48,8 +47,11 @@ fn main() {
         Prev => subcmd::prev(),
         Next => subcmd::next(),
         Add { query } => subcmd::add(query),
+        AddNext { query } => subcmd::addnext(query),
+        Clear => subcmd::clear(),
         Search { .. } => subcmd::search(app.cmd),
         Status => subcmd::status(),
+        Random { number } => subcmd::random(number),
         Daemon { cmd } => {
             use cli::DaemonCommand::*;
             match cmd {
@@ -96,6 +98,16 @@ pub fn config() -> Result<config::Config, error::Error> {
                     daemon start`?"
             .into())
     }
+
+    macro_rules! chk {
+        ($f:ident) => (if cfg.$f == config::Config::default().$f {
+            warn!("`SUBS_{}` is the default; do you want this?", stringify!($f).to_uppercase())
+        });
+    }
+
+    chk!(url);
+    chk!(username);
+    chk!(password);
 
     Ok(cfg)
 }

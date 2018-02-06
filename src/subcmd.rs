@@ -7,10 +7,25 @@ pub fn pause() -> Result { daemon::send(Command::Pause) }
 pub fn toggle() -> Result { daemon::send(Command::Toggle) }
 pub fn prev() -> Result { daemon::send(Command::Prev) }
 pub fn next() -> Result { daemon::send(Command::Next) }
+pub fn clear() -> Result { daemon::send(Command::Clear) }
 
 pub fn add(query: String) -> Result {
     if let Reply::Other(r) = daemon::send_recv(Command::AddSearch(query))? {
-        if r.is_empty() {
+        if !r.starts_with("Nothing") {
+            println!("{}", r);
+            Ok(())
+        } else {
+            Err(Error::Response(r))
+        }
+    } else {
+        unreachable!()
+    }
+}
+
+pub fn addnext(query: String) -> Result {
+    if let Reply::Other(r) = daemon::send_recv(Command::AddNextSearch(query))? {
+        if !r.starts_with("Nothing") {
+            println!("{}", r);
             Ok(())
         } else {
             Err(Error::Response(r))
@@ -21,6 +36,10 @@ pub fn add(query: String) -> Result {
 }
 
 pub fn load(name: String) -> Result { unimplemented!() }
+
+pub fn random(n: usize) -> Result {
+    daemon::send(Command::Random(n))
+}
 
 pub fn search(args: AppCommand) -> Result {
     if let AppCommand::Search {

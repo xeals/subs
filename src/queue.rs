@@ -12,13 +12,15 @@ impl Queue {
         }
     }
 
-    pub fn position(&self) -> usize {self.position}
+    pub fn position(&self) -> usize { self.position }
 
     pub fn len(&self) -> usize { self.songs.len() }
 
     pub fn is_empty(&self) -> bool { self.len() == 0 }
 
     pub fn append(&mut self, song: usize) { self.songs.push(song); }
+
+    pub fn clear(&mut self) { self.songs.clear() }
 
     pub fn insert_next(&mut self, song: usize) {
         self.songs.insert(self.position + 1, song);
@@ -36,12 +38,28 @@ impl Queue {
 
     pub fn next(&mut self) -> Option<usize> {
         if !self.is_empty() && self.position <= self.len() - 1 {
-            let song = self.songs[self.position];
             self.position += 1;
-            Some(song)
+            Some(self.songs[self.position])
         } else {
             None
         }
+    }
+
+    pub fn prev(&mut self) -> Option<usize> {
+        if !self.is_empty() {
+            if self.position == 0 {
+            } else {
+                self.position -= 1;
+            }
+            Some(self.songs[self.position])
+        } else {
+            None
+        }
+    }
+
+    pub fn prev2(&mut self) -> Option<usize> {
+        self.prev();
+        self.prev()
     }
 }
 
