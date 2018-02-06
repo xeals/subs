@@ -2,12 +2,13 @@ use cli::AppCommand;
 use daemon::{self, Command, Reply};
 use error::{Error, Result};
 
-pub fn play() -> Result { daemon::send(Command::Play) }
-pub fn pause() -> Result { daemon::send(Command::Pause) }
-pub fn toggle() -> Result { daemon::send(Command::Toggle) }
-pub fn prev() -> Result { daemon::send(Command::Prev) }
-pub fn next() -> Result { daemon::send(Command::Next) }
 pub fn clear() -> Result { daemon::send(Command::Clear) }
+pub fn next() -> Result { daemon::send(Command::Next) }
+pub fn pause() -> Result { daemon::send(Command::Pause) }
+pub fn play() -> Result { daemon::send(Command::Play) }
+pub fn prev() -> Result { daemon::send(Command::Prev) }
+pub fn random(n: usize) -> Result { daemon::send(Command::Random(n)) }
+pub fn toggle() -> Result { daemon::send(Command::Toggle) }
 
 pub fn add(query: String) -> Result {
     if let Reply::Other(r) = daemon::send_recv(Command::AddSearch(query))? {
@@ -36,8 +37,6 @@ pub fn addnext(query: String) -> Result {
 }
 
 pub fn load(name: String) -> Result { unimplemented!() }
-
-pub fn random(n: usize) -> Result { daemon::send(Command::Random(n)) }
 
 pub fn search(args: AppCommand) -> Result {
     if let AppCommand::Search {
@@ -85,4 +84,12 @@ pub fn status() -> Result {
     } else {
         unreachable!()
     }
+}
+
+pub fn ls_playlists() -> Result {
+    unimplemented!()
+}
+
+pub fn ls_artists(number: usize) -> Result {
+    unimplemented!()
 }

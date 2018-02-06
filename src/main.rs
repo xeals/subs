@@ -38,20 +38,26 @@ fn main() {
     }
 
     use cli::AppCommand::*;
-    use cli::ListCommand;
     if let Err(err) = match app.cmd {
-        Load { name } => subcmd::load(name),
-        Pause => subcmd::pause(),
-        Play => subcmd::play(),
-        Toggle => subcmd::toggle(),
-        Prev => subcmd::prev(),
-        Next => subcmd::next(),
         Add { query } => subcmd::add(collapse(query)),
         AddNext { query } => subcmd::addnext(collapse(query)),
         Clear => subcmd::clear(),
+        Load { name } => subcmd::load(name),
+        Next => subcmd::next(),
+        Pause => subcmd::pause(),
+        Play => subcmd::play(),
+        Prev => subcmd::prev(),
+        Random { number } => subcmd::random(number),
         Search { .. } => subcmd::search(app.cmd),
         Status => subcmd::status(),
-        Random { number } => subcmd::random(number),
+        Toggle => subcmd::toggle(),
+        List { cmd } => {
+            use cli::ListCommand::*;
+            match cmd {
+                Playlist => subcmd::ls_playlists(),
+                Artist { number } => subcmd::ls_artists(number),
+            }
+        }
         Daemon { cmd } => {
             use cli::DaemonCommand::*;
             match cmd {
@@ -60,7 +66,7 @@ fn main() {
                 Restart => daemon::cmd_restart(),
             }
         }
-        _ => unimplemented!(),
+        _ => Err("Not yet implemented!".into())
     } {
         error!("{}", err);
         ::std::process::exit(1);
