@@ -26,7 +26,7 @@ pub enum Command {
     AddSearch(String),
     AddNext(u64),
     AddNextSearch(String),
-    Search(String, bool, bool, bool),
+    Search(String, bool, bool, bool, usize),
     StatusReq,
     Status(String),
     Random(usize),
@@ -41,8 +41,8 @@ pub enum Command {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Reply {
     Search {
-        albums: Vec<String>,
         artists: Vec<String>,
+        albums: Vec<String>,
         songs: Vec<String>,
     },
     Other(String),
@@ -193,10 +193,10 @@ impl Daemon {
                     unreachable!()
                 }
             }
-            Search(q, r, a, s) => {
+            Search(q, r, a, s, n) => {
                 macro_rules! chk {
                     ($t:ident) => (if $t {
-                        SearchPage::new()
+                        SearchPage::new().with_size(n)
                     } else {
                         search::NONE
                     });

@@ -46,8 +46,8 @@ fn main() {
         Toggle => subcmd::toggle(),
         Prev => subcmd::prev(),
         Next => subcmd::next(),
-        Add { query } => subcmd::add(query),
-        AddNext { query } => subcmd::addnext(query),
+        Add { query } => subcmd::add(collapse(query)),
+        AddNext { query } => subcmd::addnext(collapse(query)),
         Clear => subcmd::clear(),
         Search { .. } => subcmd::search(app.cmd),
         Status => subcmd::status(),
@@ -60,7 +60,7 @@ fn main() {
                 Restart => daemon::cmd_restart(),
             }
         }
-        _ => Ok(()),
+        _ => unimplemented!(),
     } {
         error!("{}", err);
         ::std::process::exit(1);
@@ -85,6 +85,10 @@ fn init_logging(v: u64) -> Result<(), ::log::SetLoggerError> {
     };
 
     base.chain(std::io::stdout()).apply()
+}
+
+pub fn collapse<T>(v: Vec<T>) -> String where T: Into<String> {
+    v.into_iter().fold(String::new(), |a, s| a + " " + &s.into())
 }
 
 pub fn config() -> Result<config::Config, error::Error> {

@@ -44,19 +44,31 @@ pub fn search(args: AppCommand) -> Result {
         query,
         only_artists,
         only_albums,
-        only_songs,
+        number,
     } = args
     {
-        let resp =
-            daemon::send_recv(Command::Search(query, false, false, true))?;
+        let resp = daemon::send_recv(Command::Search(
+            ::collapse(query),
+            only_artists,
+            only_albums,
+            !(only_artists || only_albums),
+            number,
+        ))?;
+
         if let Reply::Search {
-            albums,
             artists,
+            albums,
             songs,
         } = resp
         {
-            for s in songs {
-                println!("{}", s);
+            for item in if only_artists {
+                artists
+            } else if only_albums {
+                albums
+            } else {
+                songs
+            } {
+                println!("{}", item);
             }
         }
     } else {

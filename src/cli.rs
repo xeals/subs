@@ -28,29 +28,25 @@ pub enum AppCommand {
         cmd: ListCommand,
     },
 
-    /// Search the library
+    /// Search the library; default returns only songs
     #[structopt(name = "search")]
     Search {
         /// Query to search with
-        query: String,
+        query: Vec<String>,
 
         /// Search only for artists
-        #[structopt(short = "r",
-                    conflicts_with_all_raw = "&[\"only_albums\", \
-                                              \"only_songs\"]")]
-        only_artists: Option<bool>,
+        #[structopt(short = "a", long = "artists",
+                    conflicts_with = "only_albums")]
+        only_artists: bool,
 
         /// Search only for albums
-        #[structopt(short = "a",
-                    conflicts_with_all_raw = "&[\"only_artists\", \
-                                              \"only_songs\"]")]
-        only_albums: Option<bool>,
+        #[structopt(short = "b", long = "albums",
+                    conflicts_with = "only_artists")]
+        only_albums: bool,
 
-        /// Search only for songs
-        #[structopt(short = "s",
-                    conflicts_with_all_raw = "&[\"only_artists\", \
-                                              \"only_albums\"]")]
-        only_songs: Option<bool>,
+        /// Number of results to return
+        #[structopt(short = "n", default_value = "20")]
+        number: usize,
     },
 
     /// Play the current playlist
@@ -69,7 +65,7 @@ pub enum AppCommand {
     #[structopt(name = "next")]
     Next,
 
-    /// Play the current playlist
+    /// Play the previous song in the current playlist
     #[structopt(name = "prev")]
     Prev,
 
@@ -104,14 +100,14 @@ pub enum AppCommand {
     #[structopt(name = "add")]
     Add {
         /// Adds the first result for the query
-        query: String,
+        query: Vec<String>,
     },
 
     /// Add a song to play after the current song
     #[structopt(name = "addnext")]
     AddNext {
         /// Adds the first result for the query
-        query: String,
+        query: Vec<String>,
     },
 
     /// Display the status of the daemon
@@ -135,9 +131,9 @@ pub enum ListCommand {
     /// Display all artists
     #[structopt(name = "artists")]
     Artist {
-        /// Maximum number of artists to display (default 20)
+        /// Maximum number of artists to display
         #[structopt(short = "n", default_value = "20")]
-        number: u64,
+        number: usize,
     },
 }
 
