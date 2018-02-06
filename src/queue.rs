@@ -23,7 +23,11 @@ impl Queue {
     pub fn clear(&mut self) { self.songs.clear() }
 
     pub fn insert_next(&mut self, song: usize) {
-        self.songs.insert(self.position + 1, song);
+        if self.position == self.len() {
+            self.songs.push(song)
+        } else {
+            self.songs.insert(self.position + 1, song);
+        }
     }
 
     pub fn current(&self) -> Option<usize> {
