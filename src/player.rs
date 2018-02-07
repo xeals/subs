@@ -169,7 +169,7 @@ impl Player {
                             )).expect("unable to start pipe");
                             log(pipe.set_state(gst::State::Playing));
                             self.pipe = Some(pipe);
-                            self.song_dur = song.duration.unwrap() as u64 - 2;
+                            self.song_dur = song.duration.unwrap() as u64;
                             self.song_rem = self.song_dur;
                             info!("left: {}", self.song_dur);
                         } else {
