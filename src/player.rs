@@ -113,6 +113,8 @@ impl Player {
                         self.playing = !self.playing;
                         info!("left: {}", self.song_rem);
                     }
+                } else {
+                    self.song_rem = 0;
                 }
             }
             Command::StatusReq => {
