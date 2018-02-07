@@ -1,4 +1,5 @@
 use clap;
+use clap::Shell;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "subs", about = "Subsonic player",
@@ -120,6 +121,13 @@ pub enum AppCommand {
         #[structopt(subcommand)]
         cmd: DaemonCommand,
     },
+
+    /// Generate shell completions
+    #[structopt(name = "completions")]
+    Completions {
+        /// Shell to generate completions for
+        shell: Shell,
+    }
 }
 
 #[derive(Debug, StructOpt)]

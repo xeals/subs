@@ -58,6 +58,14 @@ fn main() {
                 Artist { number } => subcmd::ls_artists(number),
             }
         }
+        Completions { shell } => {
+            cli::App::clap().gen_completions_to(
+                "subs",
+                shell,
+                &mut ::std::io::stdout(),
+            );
+            Ok(())
+        }
         Daemon { cmd } => {
             use cli::DaemonCommand::*;
             match cmd {
@@ -66,7 +74,7 @@ fn main() {
                 Restart => daemon::cmd_restart(),
             }
         }
-        _ => Err("Not yet implemented!".into())
+        _ => Err("Not yet implemented!".into()),
     } {
         error!("{}", err);
         ::std::process::exit(1);
@@ -93,8 +101,12 @@ fn init_logging(v: u64) -> Result<(), ::log::SetLoggerError> {
     base.chain(std::io::stdout()).apply()
 }
 
-pub fn collapse<T>(v: Vec<T>) -> String where T: Into<String> {
-    v.into_iter().fold(String::new(), |a, s| a + " " + &s.into())
+pub fn collapse<T>(v: Vec<T>) -> String
+where
+    T: Into<String>,
+{
+    v.into_iter()
+        .fold(String::new(), |a, s| a + " " + &s.into())
 }
 
 pub fn config() -> Result<config::Config, error::Error> {
