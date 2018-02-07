@@ -90,7 +90,7 @@ impl Player {
                 if let Some(ref pipe) = self.pipe {
                     log(pipe.set_state(gst::State::Paused));
                     self.song_rem = self.song_dur - secs(pipe);
-                    info!("left: {}", self.song_rem);
+                    info!("song duration left: {}", self.song_dur);
                 } else {
                     self.song_rem = 0;
                 }
@@ -111,7 +111,7 @@ impl Player {
                         });
                         self.song_rem = self.song_dur - secs(pipe);
                         self.playing = !self.playing;
-                        info!("left: {}", self.song_rem);
+                        info!("song duration left: {}", self.song_dur);
                     }
                 } else {
                     self.song_rem = 0;
@@ -169,11 +169,14 @@ impl Player {
                             )).expect("unable to start pipe");
                             log(pipe.set_state(gst::State::Playing));
                             self.pipe = Some(pipe);
-                            self.song_dur = song.duration.unwrap() as u64;
+                            self.song_dur = match song.duration {
+                                Some(d) => d as u64,
+                                None => song.size / 192 / 124,
+                            };
                             self.song_rem = self.song_dur;
-                            info!("left: {}", self.song_dur);
+                            info!("song duration left: {}", self.song_dur);
                         } else {
-                            info!("queue is empty, what happened?");
+                            warn!("queue is empty, what happened?");
                             self.song_rem = 9999;
                         }
                     }
