@@ -20,7 +20,7 @@ $ sudo mkdir -p /usr/local/bin
 $ sudo cp ./target/release/subs /usr/local/bin/subs
 ```
 
-# Dependencies
+## Dependencies
 
 - rust
 - cargo

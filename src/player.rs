@@ -90,7 +90,7 @@ impl Player {
                 if let Some(ref pipe) = self.pipe {
                     log(pipe.set_state(gst::State::Paused));
                     self.song_rem = self.song_dur - secs(pipe);
-                    info!("song duration left: {}", self.song_dur);
+                    info!("song duration left: {}", self.song_rem);
                 } else {
                     self.song_rem = 0;
                 }
@@ -111,7 +111,7 @@ impl Player {
                         });
                         self.song_rem = self.song_dur - secs(pipe);
                         self.playing = !self.playing;
-                        info!("song duration left: {}", self.song_dur);
+                        info!("song duration left: {}", self.song_rem);
                     }
                 } else {
                     self.song_rem = 0;
