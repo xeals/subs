@@ -1,4 +1,3 @@
-use configure;
 use serde_json;
 use std::{io, result};
 use sunk;
@@ -9,7 +8,7 @@ pub type Result = result::Result<(), Error>;
 pub enum Error {
     #[fail(display = "Subsonic error: {}", _0)] Subsonic(#[cause] sunk::Error),
     #[fail(display = "Unable to generate config: {}", _0)]
-    Config(#[cause] configure::DeserializeError),
+    Config(#[cause] config::ConfigError),
     #[fail(display = "{}", _0)] Other(&'static str),
     #[fail(display = "")] ExplicitStop,
     #[fail(display = "IO error: {}", _0)] Io(#[cause] io::Error),
@@ -29,7 +28,7 @@ macro_rules! box_err {
 }
 
 box_err!(sunk::Error, Subsonic);
-box_err!(configure::DeserializeError, Config);
+box_err!(config::ConfigError, Config);
 box_err!(io::Error, Io);
 box_err!(serde_json::Error, Serde);
 

@@ -59,7 +59,7 @@ pub struct Daemon {
 }
 
 impl Daemon {
-    fn new(cfg: ::config::Config) -> Self {
+    fn new(cfg: ::conf::Conf) -> Self {
         let _client = Client::new(&cfg.url, &cfg.username, &cfg.password)
             .expect("error starting server");
         let client = Arc::new(Mutex::new(_client));
@@ -230,7 +230,7 @@ impl Drop for Daemon {
 }
 
 pub fn send(cmd: Command) -> Result {
-    let cfg = ::config()?;
+    let cfg = ::conf::Conf::new()?;
     let mut stream = UnixStream::connect(cfg.socket)?;
 
     let json = serde_json::to_string(&cmd)?;
@@ -241,7 +241,7 @@ pub fn send(cmd: Command) -> Result {
 }
 
 pub fn send_recv(cmd: Command) -> ::std::result::Result<Reply, Error> {
-    let cfg = ::config()?;
+    let cfg = ::conf::Conf::new()?;
     let mut stream = UnixStream::connect(cfg.socket)?;
 
     let json = serde_json::to_string(&cmd)?;
@@ -256,8 +256,7 @@ pub fn send_recv(cmd: Command) -> ::std::result::Result<Reply, Error> {
 }
 
 pub fn cmd_start() -> Result {
-    use configure::Configure;
-    let cfg = ::config::Config::generate()?;
+    let cfg = ::conf::Conf::new()?;
 
     debug!("Using config {:?}", cfg);
 
