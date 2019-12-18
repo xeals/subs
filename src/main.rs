@@ -1,6 +1,6 @@
 extern crate clap;
-#[macro_use]
-extern crate configure;
+extern crate config;
+extern crate dirs;
 extern crate crossbeam_channel;
 extern crate ctrlc;
 #[macro_use]
@@ -22,7 +22,7 @@ extern crate unix_socket;
 mod cli;
 mod error;
 mod subcmd;
-mod config;
+mod conf;
 mod daemon;
 mod queue;
 mod player;
@@ -30,7 +30,6 @@ mod player;
 use structopt::StructOpt;
 
 fn main() {
-    use_default_config!();
     let app = cli::App::from_args();
 
     if let Err(err) = init_logging(app.verbosity) {
@@ -107,29 +106,4 @@ where
 {
     v.into_iter()
         .fold(String::new(), |a, s| a + " " + &s.into())
-}
-
-pub fn config() -> Result<config::Config, error::Error> {
-    use configure::Configure;
-    let cfg = config::Config::generate()?;
-
-    debug!("Using config: {:?}", cfg);
-
-    if !cfg.socket.exists() {
-        return Err("Socket file doesn't exist; did you try running `subs \
-                    daemon start`?"
-            .into())
-    }
-
-    macro_rules! chk {
-        ($f:ident) => (if cfg.$f == config::Config::default().$f {
-            warn!("`SUBS_{}` is the default; do you want this?", stringify!($f).to_uppercase())
-        });
-    }
-
-    chk!(url);
-    chk!(username);
-    chk!(password);
-
-    Ok(cfg)
 }
